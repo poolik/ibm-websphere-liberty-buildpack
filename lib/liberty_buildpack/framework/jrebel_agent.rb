@@ -60,7 +60,7 @@ module LibertyBuildpack::Framework
       jr_home = File.join(@app_dir, JR_HOME_DIR)
       FileUtils.mkdir_p(jr_home)
 
-      url = @configuration[:download_url]
+      url = @configuration['download_url']
       puts "JRebelAgent: download_url=#{url}"
 
       download_agent('6.0.2-SNAPSHOT', url, 'jrebel.jar', jr_home)
