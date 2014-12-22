@@ -75,7 +75,7 @@ module LibertyBuildpack::Framework
       jr_agent = File.join(jr_home, 'jrebel.jar')
 
       # We specify a log file path, but do not enable logging, the client can do it at his discretion
-      jr_log = File.join(jr_home, 'jrebel.log')
+      jr_log = File.join(@common_paths.log_directory, 'jrebel.log')
 
       @java_opts << "-javaagent:#{jr_agent}"
       @java_opts << '-Drebel.remoting_plugin=true'
