@@ -41,33 +41,33 @@ module LibertyBuildpack::Framework
       @vcap_application = context[:vcap_application]
       @java_opts = context[:java_opts]
 
-      puts "JRebelAgent: initialize, appdir: #{@app_dir}, configuration: #{@configuration}"
+      STDERR.puts "JRebelAgent: initialize, appdir: #{@app_dir}, configuration: #{@configuration}"
     end
 
     def detect
       if File.exists?("#{@app_dir}/WEB-INF/classes/rebel-remote.xml")
-        puts 'JRebelAgent: detect, rebel-remote.xml found'
+        STDERR.puts 'JRebelAgent: detect, rebel-remote.xml found'
         'jrebel-6.0.2'
       else
-        puts 'JRebelAgent: detect, rebel-remote.xml not found'
+        STDERR.puts 'JRebelAgent: detect, rebel-remote.xml not found'
         nil
       end
     end
 
     def compile
-      puts 'JRebelAgent: compile'
+      STDERR.puts 'JRebelAgent: compile'
 
       jr_home = File.join(@app_dir, JR_HOME_DIR)
       FileUtils.mkdir_p(jr_home)
 
       url = @configuration['download_url']
-      puts "JRebelAgent: download_url=#{url}"
+      STDERR.puts "JRebelAgent: download_url=#{url}"
 
       download_agent('6.0.2-SNAPSHOT', url, 'jrebel.jar', jr_home)
     end
 
     def release
-      puts 'JRebelAgent: release'
+      STDERR.puts 'JRebelAgent: release'
 
       jr_home = File.join(@app_dir, JR_HOME_DIR)
       jr_agent = File.join(jr_home, 'jrebel.jar')
