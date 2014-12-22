@@ -67,9 +67,11 @@ module LibertyBuildpack::Framework
     end
 
     def release
-      STDERR.puts 'JRebelAgent: release'
+      app_dir = @common_paths.relative_location
 
-      jr_home = File.join(@app_dir, JR_HOME_DIR)
+      STDERR.puts "JRebelAgent: release, appdir=#{app_dir}"
+
+      jr_home = File.join(app_dir, JR_HOME_DIR)
       jr_agent = File.join(jr_home, 'jrebel.jar')
 
       # We specify a log file path, but do not enable logging, the client can do it at his discretion
