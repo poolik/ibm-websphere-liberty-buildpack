@@ -66,8 +66,8 @@ module LibertyBuildpack::Framework
       agent_url = @configuration['download_agent_url']
       native_agent_url = @configuration['download_native_agent_url']
 
-      Util.download(@version, agent_url, 'JRebel Agent', JREBEL_JAR, jr_home)
-      Util.download(@version, native_agent_url, 'JRebel Native Agent', LIBJREBEL_SO, jr_home)
+      LibertyBuildpack::Util.download(@version, agent_url, 'JRebel Agent', JREBEL_JAR, jr_home)
+      LibertyBuildpack::Util.download(@version, native_agent_url, 'JRebel Native Agent', LIBJREBEL_SO, jr_home)
     end
 
     def release
