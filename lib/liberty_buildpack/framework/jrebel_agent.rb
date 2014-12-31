@@ -51,7 +51,7 @@ module LibertyBuildpack::Framework
 
     def detect
       if File.exists?("#{@app_dir}/WEB-INF/classes/rebel-remote.xml")
-        puts '-----> Found rebel-remote.xml, enabling JRebel'
+        @logger.info('Found rebel-remote.xml, enabling JRebel')
         "jrebel-#{@version}"
       else
         @logger.debug('No rebel-remote.xml found in the application.')
