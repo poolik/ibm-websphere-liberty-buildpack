@@ -24,6 +24,12 @@ module LibertyBuildpack::Framework
   # Provides the required detect/compile/release functionality in order to use JRebel with an application
   class JRebelAgent
 
+    JR_HOME_DIR = '.jrebel'.freeze
+
+    JREBEL_JAR = 'jrebel.jar'
+
+    LIBJREBEL_SO = 'libjrebel.so'
+
     # Creates an instance, passing in a context of information available to the component
     #
     # @param [Hash] context the context that is provided to the instance
@@ -38,7 +44,6 @@ module LibertyBuildpack::Framework
       @app_dir = context[:app_dir]
       @configuration = context[:configuration]
       @common_paths = context[:common_paths] || LibertyBuildpack::Container::CommonPaths.new
-      @vcap_application = context[:vcap_application]
       @java_opts = context[:java_opts]
 
       @version = @configuration['version']
@@ -46,9 +51,10 @@ module LibertyBuildpack::Framework
 
     def detect
       if File.exists?("#{@app_dir}/WEB-INF/classes/rebel-remote.xml")
-        @logger.info 'File rebel-remote.xml found, enabling JRebel'
+        puts '-----> Found rebel-remote.xml, enabling JRebel'
         "jrebel-#{@version}"
       else
+        @logger.debug('No rebel-remote.xml found in the application.')
         nil
       end
     end
@@ -60,33 +66,23 @@ module LibertyBuildpack::Framework
       agent_url = @configuration['download_agent_url']
       native_agent_url = @configuration['download_native_agent_url']
 
-      download_agent(@version, agent_url, 'jrebel.jar', jr_home)
-      download_agent(@version, native_agent_url, 'libjrebel.so', jr_home)
+      Util.download(@version, agent_url, 'JRebel Agent', JREBEL_JAR, jr_home)
+      Util.download(@version, native_agent_url, 'JRebel Native Agent', LIBJREBEL_SO, jr_home)
     end
 
     def release
       app_dir = @common_paths.relative_location
 
       jr_home = File.join(app_dir, JR_HOME_DIR)
-      jr_native_agent = File.join(jr_home, 'libjrebel.so')
+      jr_native_agent = File.join(jr_home, LIBJREBEL_SO)
 
-      # We specify a log file path, but do not enable logging, the client can do it at his discretion
       jr_log = File.join(@common_paths.log_directory, 'jrebel.log')
 
       @java_opts << "-agentpath:#{jr_native_agent}"
       @java_opts << '-Xshareclasses:none'
       @java_opts << '-Drebel.remoting_plugin=true'
+      @java_opts << '-Drebel.log=true'
       @java_opts << "-Drebel.log.file=#{jr_log}"
-    end
-
-    private
-
-    JR_HOME_DIR = '.jrebel'.freeze
-
-    def download_agent(version_desc, uri_source, target_jar_name, target_dir)
-      LibertyBuildpack::Util.download(version_desc, uri_source, target_jar_name, target_jar_name, target_dir)
-    rescue => e
-      raise "Unable to download the JRebel Agent jar. Ensure that the agent jar at #{uri_source} is available and accessible. #{e.message}"
     end
   end
 end
