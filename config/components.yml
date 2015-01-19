@@ -24,6 +24,6 @@ jres:
 frameworks:
   - "LibertyBuildpack::Framework::Env"
   - "LibertyBuildpack::Framework::JavaOpts"
-#  - "LibertyBuildpack::Framework::SpringAutoReconfiguration"
+  - "LibertyBuildpack::Framework::SpringAutoReconfiguration"
   - "LibertyBuildpack::Framework::NewRelicAgent"
   - "LibertyBuildpack::Framework::JRebelAgent"
