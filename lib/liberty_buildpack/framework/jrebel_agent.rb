@@ -72,7 +72,7 @@ module LibertyBuildpack::Framework
 
       LibertyBuildpack::Util.download(@version, @uri, 'JRebel zip', @nosetup_zip, jr_home)
       FileUtils.rm_r(File.join(jr_home, JREBEL)) if File.exist?(File.join(jr_home, JREBEL))
-      ContainerUtils.unzip(File.join(jr_home, @nosetup_zip), jr_home)
+      LibertyBuildpack::Container::ContainerUtils.unzip(File.join(jr_home, @nosetup_zip), jr_home)
     end
 
     def release
