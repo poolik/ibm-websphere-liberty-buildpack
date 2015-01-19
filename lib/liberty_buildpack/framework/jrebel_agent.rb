@@ -18,6 +18,7 @@ require 'liberty_buildpack/framework'
 require 'liberty_buildpack/repository/configured_item'
 require 'liberty_buildpack/util/download'
 require 'liberty_buildpack/container/common_paths'
+require 'liberty_buildpack/container/container_utils'
 
 module LibertyBuildpack::Framework
 
@@ -25,10 +26,10 @@ module LibertyBuildpack::Framework
   class JRebelAgent
 
     JR_HOME_DIR = '.jrebel'.freeze
-
     JREBEL_JAR = 'jrebel.jar'
+    JREBEL = 'jrebel'
+    LIBJREBEL_SO = File.join(JREBEL, 'lib', 'libjrebel.so')
 
-    LIBJREBEL_SO = 'libjrebel.so'
 
     # Creates an instance, passing in a context of information available to the component
     #
@@ -45,13 +46,13 @@ module LibertyBuildpack::Framework
       @configuration = context[:configuration]
       @common_paths = context[:common_paths] || LibertyBuildpack::Container::CommonPaths.new
       @java_opts = context[:java_opts]
-
-      @version = @configuration['version']
     end
 
     def detect
       if File.exists?("#{@app_dir}/WEB-INF/classes/rebel-remote.xml")
         @logger.info('Found rebel-remote.xml, enabling JRebel')
+        @version, @uri = LibertyBuildpack::Repository::ConfiguredItem.find_item(@configuration)
+        @nosetup_zip = "jrebel-#{@version}-nosetup.zip"
         "jrebel-#{@version}"
       else
         @logger.debug('No rebel-remote.xml found in the application.')
@@ -60,14 +61,18 @@ module LibertyBuildpack::Framework
     end
 
     def compile
+      if @app_dir.nil?
+        raise 'app directory must be provided'
+      elsif @version.nil? || @uri.nil? || @nosetup_zip.nil?
+        raise "Version #{@version}, uri #{@uri}, or new jrebel-nosetup.zip #{@nosetup_zip} is not available, detect needs to be invoked"
+      end
+
       jr_home = File.join(@app_dir, JR_HOME_DIR)
       FileUtils.mkdir_p(jr_home)
 
-      agent_url = @configuration['download_agent_url']
-      native_agent_url = @configuration['download_native_agent_url']
-
-      LibertyBuildpack::Util.download(@version, agent_url, 'JRebel Agent', JREBEL_JAR, jr_home)
-      LibertyBuildpack::Util.download(@version, native_agent_url, 'JRebel Native Agent', LIBJREBEL_SO, jr_home)
+      LibertyBuildpack::Util.download(@version, @uri, 'JRebel zip', @nosetup_zip, jr_home)
+      FileUtils.rm_r(File.join(jr_home, JREBEL)) if File.exist?(File.join(jr_home, JREBEL))
+      ContainerUtils.unzip(File.join(jr_home, @nosetup_zip), jr_home)
     end
 
     def release

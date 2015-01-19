@@ -15,6 +15,5 @@
 
 # Service configuration
 ---
-version: 6.0.3-SNAPSHOT
-download_agent_url: "http://yanu.eu/temp/jrebel.jar"
-download_native_agent_url: "http://yanu.eu/temp/libjrebel.so"
+version: 6.0.2
+repository_root: "http://www.poolik.com/bluemix/"
