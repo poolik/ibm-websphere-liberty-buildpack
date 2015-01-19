@@ -81,6 +81,7 @@ module LibertyBuildpack::Framework
       @java_opts << "-agentpath:#{jr_native_agent}"
       @java_opts << '-Xshareclasses:none'
       @java_opts << '-Drebel.remoting_plugin=true'
+      @java_opts << '-Drebel.redefine_class=false'
       @java_opts << '-Drebel.log=true'
       @java_opts << "-Drebel.log.file=#{jr_log}"
     end
