@@ -28,7 +28,7 @@ module LibertyBuildpack::Framework
     JR_HOME_DIR = '.jrebel'.freeze
     JREBEL_JAR = 'jrebel.jar'
     JREBEL = 'jrebel'
-    LIBJREBEL_SO = File.join(JREBEL, 'lib', 'libjrebel.so')
+    LIBJREBEL_SO = File.join(JREBEL, 'lib', 'libjrebel64.so')
 
 
     # Creates an instance, passing in a context of information available to the component
@@ -73,8 +73,6 @@ module LibertyBuildpack::Framework
       LibertyBuildpack::Util.download(@version, @uri, 'JRebel zip', @nosetup_zip, jr_home)
       FileUtils.rm_r(File.join(jr_home, JREBEL)) if File.exist?(File.join(jr_home, JREBEL))
       LibertyBuildpack::Container::ContainerUtils.unzip(File.join(jr_home, @nosetup_zip), jr_home)
-      puts 'JRebel home:', Dir.entries(jr_home)
-      puts '.jrebel/jrebel:', Dir.entries(File.join(jr_home, JREBEL))
     end
 
     def release
