@@ -25,11 +25,14 @@ module LibertyBuildpack::Framework
   # Provides the required detect/compile/release functionality in order to use JRebel with an application
   class JRebelAgent
 
+    # JRebel home directory
     JR_HOME_DIR = '.jrebel'.freeze
+    # Name of the main jar file
     JREBEL_JAR = 'jrebel.jar'
+    # Directory name
     JREBEL = 'jrebel'
+    # Path tho the native agent within the nosetup.zip
     LIBJREBEL_SO = File.join(JREBEL, 'lib', 'libjrebel64.so')
-
 
     # Creates an instance, passing in a context of information available to the component
     #
@@ -48,6 +51,11 @@ module LibertyBuildpack::Framework
       @java_opts = context[:java_opts]
     end
 
+    #-----------------------------------------------------------------------------------------
+    # Determines if the application contains a rebel-remote.xml to provide a configured jrebel agent
+    #
+    # @return [String] the detected versioned ID if the environment and config are valid, otherwise nil
+    #------------------------------------------------------------------------------------------
     def detect
       if File.exists?("#{@app_dir}/WEB-INF/classes/rebel-remote.xml")
         @logger.info('Found rebel-remote.xml, enabling JRebel')
@@ -60,6 +68,9 @@ module LibertyBuildpack::Framework
       end
     end
 
+    #-----------------------------------------------------------------------------------------
+    # Create the JRebel directory and its contents for the app droplet.
+    #------------------------------------------------------------------------------------------
     def compile
       if @app_dir.nil?
         raise 'app directory must be provided'
@@ -75,6 +86,9 @@ module LibertyBuildpack::Framework
       LibertyBuildpack::Container::ContainerUtils.unzip(File.join(jr_home, @nosetup_zip), jr_home)
     end
 
+    #-----------------------------------------------------------------------------------------
+    # Create the JRebel agent options appended as java_opts.
+    #------------------------------------------------------------------------------------------
     def release
       app_dir = @common_paths.relative_location
 
@@ -92,4 +106,3 @@ module LibertyBuildpack::Framework
     end
   end
 end
-
