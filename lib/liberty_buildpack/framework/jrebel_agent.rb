@@ -81,9 +81,18 @@ module LibertyBuildpack::Framework
       jr_home = File.join(@app_dir, JR_HOME_DIR)
       FileUtils.mkdir_p(jr_home)
 
-      LibertyBuildpack::Util.download(@version, @uri, 'JRebel zip', @nosetup_zip, jr_home)
+      download_nosetup_zip(jr_home)
       FileUtils.rm_r(File.join(jr_home, JREBEL)) if File.exist?(File.join(jr_home, JREBEL))
       LibertyBuildpack::Container::ContainerUtils.unzip(File.join(jr_home, @nosetup_zip), jr_home)
+    end
+
+    #-----------------------------------------------------------------------------------------
+    # Download the JRebel zip from the repository as specified in the JRebel configuration.
+    #------------------------------------------------------------------------------------------
+    def download_nosetup_zip(jr_home)
+      LibertyBuildpack::Util.download(@version, @uri, 'JRebel zip', @nosetup_zip, jr_home)
+    rescue => e
+      raise "Unable to download the JRebel zip. Ensure that the zip at #{@uri} is available and accessible. #{e.message}"
     end
 
     #-----------------------------------------------------------------------------------------
